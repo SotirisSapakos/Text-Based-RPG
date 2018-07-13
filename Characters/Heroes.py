@@ -13,10 +13,18 @@ class GenericHero(Character):
         self.inventory = Inventory()
         self.equipped_items = [None] * 2  # [0] -> Primary || [1] -> Secondary
 
-        # Initial stats calculation
+        self.calculate_stats()
+
+    def drop_items(self, equipped_items_number):
+        """
+        Remove item from equipped item
+        :param equipped_items_number: the primary or secondary inventory (0: primary, 1: secondary)
+        """
+        self.equipped_items.remove(self.equipped_items[equipped_items_number])
         self.calculate_stats()
 
     def modify_health(self, amount):
+
         """
         Modify the players health (Heal or damage)
         :param amount: Amount of health points to increase/decrease
@@ -25,26 +33,32 @@ class GenericHero(Character):
         if self.current_hp > self.max_hp:
             self.current_hp = self.max_hp
         elif self.current_hp <= 0:
-            pass  # TODO: Kill the Character
+            self.kill() # TODO: Kill the Character
 
     def attack(self, other):
         pass
 
     def use_item(self, item: Items.Item):
+
         """
         Uses a specific item and removes it from the inventory
         :param item: Item to be used
         """
         if isinstance(item, Items.ItemHealing):
             self.modify_health(item.value)
-            self.inventory.rem_item(item, 1)  # TODO: Remove item from inventory
+            self.inventory.rem_item(item, 1)  # TODO: Remove item from inventory (Κατάργηση στοιχείου από το απόθεμα)
         else:
-            pass  # TODO: Check for other items that can be used from the inventory
+            # TODO: Check for other items that can be used from the inventory
+            pass
 
     def calculate_stats(self):
         """
         Calculate attack and speed statistics for the hero.
         """
+
+        self.current_attack = self.base_attack
+        self.current_speed = self.base_speed
+
         for item in self.equipped_items:
             if item is None:
                 continue
@@ -67,6 +81,17 @@ class Human(GenericHero):
         self.calculate_stats()
 
 
+class Dwarves(GenericHero):
+    name = "Dwarves"
+
+    def __init__(self, x, y):
+        super.__init__(x, y, 20, 30, 30, 30)
+        self.inventory.add_item(Items.HEALTH_POT, 2)
+        self.equipped_items[0] = Items.HUNTERS_AXE
+        self.equipped_items[1] = Items.WOODEN_SHIELD
+        self.calculate_stats()
+
+
 class Elf(GenericHero):
     name = "Elf"
 
@@ -76,4 +101,15 @@ class Elf(GenericHero):
         self.inventory.add_item(Items.MEDICAL_HERB, 2)
         self.equipped_items[0] = Items.STANDARD_BOW
         self.equipped_items[1] = Items.WOODEN_SHIELD
+        self.calculate_stats()
+
+
+class Orcs(GenericHero):
+    name = "Orcs"
+
+    def __init__(self, x, y):
+        super.__init__(x, y, 30, 35, 25, 35)
+        self.inventory.add_item(Items.MEDICAL_HERB, 3)
+        self.equipped_items[0] = Items.OLD_AXE
+        self.equipped_items[1] = Items.RUSTED_SHIELD
         self.calculate_stats()
