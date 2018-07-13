@@ -1,5 +1,6 @@
 from MapEntity import Door, Barrier, SpaceObject
 from Characters.Enemies import Goblin, Hobgoblin, Bugbear
+from SubRooms import *
 
 
 class Room:
@@ -7,6 +8,13 @@ class Room:
     doors = []
     enemies = []
     barriers = []
+
+    # subrooms usage:
+    # ------------------------
+    # First position of subrooms(list) is the subroom for the top placed door in the map
+    # Second position is the subroom for the bottom placed door in the map
+    # ------------------------
+    subrooms = []
 
     def __init__(self, width, height):
         self.width = width
@@ -17,11 +25,11 @@ class Room:
         """
         Generate/Create the room.
         """
-        self.place_doors()
-        self.place_enemies()
-        self.print_room()
+        self.__place_doors()
+        self.__place_enemies()
+        self.__print_room()
 
-    def print_room(self):
+    def __print_room(self):
         """
         Print the room as string for the user to see.
         """
@@ -36,14 +44,14 @@ class Room:
 
         print(" ".join(helper_line))
 
-    def place_doors(self):
+    def __place_doors(self):
         """
         Automatically place the doors on the map.
         """
         for door in self.doors:
             self.room_table[door.position.x][door.position.y] = "="
 
-    def place_enemies(self):
+    def __place_enemies(self):
         """
         Automatically place the enemies on the map.
         """
@@ -63,7 +71,6 @@ class Room:
         if door.position.x == self.width-1 or door.position.x == 0:
             if door.position.x == 0:
                 # this is subroom1 door...
-                # TODO: add a class for subroom
                 pass
             else:
                 # this is subroom2 door...
@@ -95,7 +102,10 @@ class Room1(Room):
         self.enemies = [Goblin(10, width-2),
                         Goblin(9, width-2)]
 
-        self.place_barriers_near_door(self.doors[2])
+        self.subrooms = [Subroom1(),
+                         Subroom2()]
+
+        self.place_barriers_near_door(self.doors[0])
 
         self.create_room()
 
@@ -111,6 +121,9 @@ class Room2(Room):
 
         self.enemies = [Goblin(1, 12),
                         Goblin(height-2, 11)]
+
+        self.subrooms = [Subroom3(),
+                         Subroom4()]
 
         self.place_barriers_near_door(self.doors[0])
         self.place_barriers_near_door(self.doors[1])
@@ -129,6 +142,9 @@ class Room3(Room):
 
         self.enemies = [Hobgoblin(height-2, 11),
                         Bugbear(10, width-2)]
+
+        self.subrooms = [Subroom5(),
+                         Subroom6()]
 
         self.place_barriers_near_door(self.doors[1])
         self.place_barriers_near_door(self.doors[2])
